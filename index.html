@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FARIS | NEXT-GEN ENGINE</title>
+    <title>BQ2A | FARIS ENGINE</title>
     <style>
-        body { margin: 0; background-color: #000; overflow: hidden; }
+        body { margin: 0; background-color: #050505; overflow: hidden; }
         canvas { width: 100%; height: 100%; display: block; }
-        .ui-overlay {
+        .hud {
             position: absolute; top: 20px; left: 20px;
-            color: #00f2ff; font-family: sans-serif;
+            color: #00f2ff; font-family: 'Courier New', monospace;
             pointer-events: none; text-shadow: 0 0 10px #00f2ff;
         }
     </style>
 </head>
 <body>
 
-    <div class="ui-overlay">
-        <h1 style="margin:0; font-size: 1.2rem;">FARIS ENGINE V1.0</h1>
-        <p style="font-size: 0.7rem; opacity: 0.7;">3D REAL-TIME GRAPHICS ACTIVE</p>
+    <div class="hud">
+        <h1 style="margin:0; font-size: 1.5rem;">PROJECT: BQ2A</h1>
+        <p style="font-size: 0.8rem; letter-spacing: 2px;">STATUS: ENGINE_ACTIVE_V1.0</p>
     </div>
 
     <canvas id="application-canvas"></canvas>
@@ -35,58 +35,44 @@
         app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
         app.setCanvasResolution(pc.RESOLUTION_AUTO);
 
-        // 1. إنشاء الكاميرا
-        const camera = new pc.Entity('camera');
-        camera.addComponent('camera', { clearColor: new pc.Color(0.02, 0.02, 0.05) });
-        app.root.addChild(camera);
-        camera.setPosition(0, 0, 4);
-
-        // 2. إضاءة محيطية (Ambient) وإضاءة قوية (Omni)
+        // إضاءة احترافية (Cinematic Lights)
         const light = new pc.Entity('light');
-        light.addComponent('light', {
-            type: 'omni',
-            color: new pc.Color(0, 0.9, 1),
-            range: 20,
-            intensity: 1.5
-        });
+        light.addComponent('light', { type: 'directional', color: new pc.Color(1, 1, 1), castShadows: true });
+        light.setEulerAngles(45, 45, 0);
         app.root.addChild(light);
-        light.setPosition(2, 2, 2);
 
-        // 3. إنشاء المجسم الثوري (Torus Knot) - شكل هندسي معقد يظهر قوة الجرافيك
+        const ambient = new pc.Entity('ambient');
+        app.root.addChild(ambient);
+
+        const camera = new pc.Entity('camera');
+        camera.addComponent('camera', { clearColor: new pc.Color(0, 0, 0) });
+        app.root.addChild(camera);
+        camera.setPosition(0, 0, 3);
+
+        // تحميل نموذج 3D حقيقي (تمثال بجودة عالية جداً)
+        // سنستخدم هنا "صندوق" معدني بلمعان قوي كبداية لضمان سرعة التحميل
         const box = new pc.Entity('box');
-        box.addComponent('render', { type: 'torus' }); 
+        box.addComponent('render', { type: 'box' });
         
-        // إعداد مادة معدنية بجودة PBR
         const material = new pc.StandardMaterial();
-        material.diffuse = new pc.Color(0.1, 0.1, 0.1);
-        material.metalness = 0.9;
-        material.shininess = 80;
+        material.diffuse = new pc.Color(0.2, 0.2, 0.2);
+        material.metalness = 1.0;
         material.useMetalness = true;
+        material.shininess = 100;
         material.update();
         
         box.render.meshInstances[0].material = material;
         app.root.addChild(box);
 
-        // 4. نظام التحكم باللمس (Touch Rotation)
-        let rotateX = 0;
-        let rotateY = 0;
-
+        // التحكم باللمس لتدوير المجسم
         if (app.touch) {
-            app.touch.on(pc.EVENT_TOUCHMOVE, function (e) {
-                const touch = e.touches[0];
-                box.rotate(touch.dy * 0.5, touch.dx * 0.5, 0);
+            app.touch.on(pc.EVENT_TOUCHMOVE, (e) => {
+                box.rotate(e.touches[0].dy, e.touches[0].dx, 0);
             });
         }
 
-        // 5. حلقة التحديث المستمر
-        app.on('update', dt => {
-            // دوران خفيف تلقائي إذا لم يتم اللمس
-            box.rotate(5 * dt, 10 * dt, 0);
-        });
-
+        app.on('update', dt => { box.rotate(5 * dt, 10 * dt, 0); });
         app.start();
-
-        // التوافق مع تغيير حجم الشاشة
         window.addEventListener('resize', () => app.resizeCanvas());
     </script>
 </body>
