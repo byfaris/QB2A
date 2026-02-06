@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAMG MINI | أقراص التصادم المحسنة</title>
+    <title>MAMG ARENA | نظام القوس</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Cairo:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --neon: #00f2ff; --pink: #ff00ff; --bg: #020205; }
@@ -15,112 +15,122 @@
             background-image: radial-gradient(circle, #1a1a2e 0%, #000 100%);
         }
 
-        .hud { width: 100%; padding: 15px; display: flex; justify-content: space-around; z-index: 100; }
-        .stat-box { background: rgba(0,0,0,0.6); border: 1px solid var(--neon); padding: 8px; border-radius: 10px; min-width: 90px; text-align: center; font-size: 14px; font-family: 'Orbitron'; }
+        /* HUD المستوحى من صورتك */
+        .hud { width: 100%; padding: 30px; display: flex; justify-content: space-around; z-index: 100; }
+        .stat-box { 
+            background: rgba(0,0,0,0.6); border: 2px solid var(--neon); 
+            padding: 10px 25px; border-radius: 15px; min-width: 110px; 
+            text-align: center; font-family: 'Orbitron';
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+        .stat-label { font-size: 12px; color: var(--neon); text-transform: uppercase; margin-bottom: 5px; }
 
-        .arena { flex-grow: 1; position: relative; width: 100%; display: flex; align-items: center; justify-content: center; gap: 40px; }
+        .arena { flex-grow: 1; position: relative; width: 100%; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 15vh; gap: 60px; }
 
-        /* الأقراص بحجم مصغر ومناسب */
+        /* الأقراص بأحجام مصغرة دقيقة */
         .disk {
-            width: 90px; height: 90px; border-radius: 50%;
+            width: 85px; height: 85px; border-radius: 50%;
             background: #111; border: 3px solid var(--neon);
-            position: relative; transition: 0.3s ease;
-            display: flex; align-items: center; justify-content: center;
+            position: relative; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
-            font-size: 14px; font-weight: bold;
+            font-size: 14px; font-weight: bold; font-family: 'Orbitron';
+            z-index: 10;
         }
 
-        /* حركة الهجوم (للأعلى ثم للأسفل بقوة) */
-        .jump-attack { animation: jump-hit 0.5s ease-in-out forwards; }
+        /* حركة القوس السينمائية */
+        .arc-attack { animation: arc-move 0.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards; }
 
-        @keyframes jump-hit {
-            0% { transform: scale(1) translateY(0); }
-            40% { transform: scale(1.4) translateY(-120px); } /* قفزة للأعلى */
-            100% { transform: scale(1) translateY(0); }
+        @keyframes arc-move {
+            0% { transform: translate(0, 0) scale(1); }
+            40% { transform: translate(-40px, -180px) scale(1.4); } /* قمة القوس */
+            100% { transform: translate(-145px, 0) scale(1); } /* لحظة الارتطام بالخصم */
         }
 
-        /* حركة دوران وانقلاب قرص الخصم عند الضرب */
-        .enemy-spin { animation: spin-flip 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
-
-        @keyframes spin-flip {
-            0% { transform: rotateX(0) rotateZ(0) scale(1); }
-            30% { transform: rotateX(180deg) rotateZ(180deg) scale(1.3) translateY(-20px); } /* الطيران والدوران */
-            100% { transform: rotateX(180deg) rotateZ(360deg) scale(1); translateY(0); }
+        /* حركة دوران وانقلاب الخصم */
+        .enemy-spin { animation: spin-logic 0.7s ease-out forwards; }
+        @keyframes spin-logic {
+            0% { transform: rotateX(0) rotateZ(0); }
+            50% { transform: rotateX(180deg) rotateZ(180deg) translateY(-30px); }
+            100% { transform: rotateX(180deg) rotateZ(360deg) translateY(0); }
         }
 
         .disk.flipped { border-color: var(--pink); box-shadow: 0 0 20px var(--pink); }
+        .label { position: absolute; bottom: -30px; font-size: 11px; color: var(--neon); letter-spacing: 1px; }
 
-        .label { position: absolute; bottom: -25px; font-size: 10px; color: var(--neon); text-transform: uppercase; }
-
-        /* اهتزاز الشاشة */
-        .shake { animation: screen-shake 0.2s; }
-        @keyframes screen-shake {
+        /* تأثير الارتجاج */
+        .shake { animation: impact-shake 0.2s; }
+        @keyframes impact-shake {
             0%, 100% { transform: translate(0,0); }
-            25% { transform: translate(4px, 4px); }
-            75% { transform: translate(-4px, -4px); }
+            50% { transform: translate(-5px, -5px); }
         }
     </style>
 </head>
-<body id="body-node">
+<body id="main-body">
 
     <div class="hud">
-        <div class="stat-box"><div>ROUND</div><div>1/3</div></div>
-        <div class="stat-box"><div>WINS</div><div id="score">0</div></div>
+        <div class="stat-box">
+            <div class="stat-label">WINS</div>
+            <div id="wins-val">9</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">ROUND</div>
+            <div id="round-val">1/3</div>
+        </div>
     </div>
 
     <div class="arena">
-        <div class="disk" id="player-disk" onclick="app.attack()">
-            MAMG
-            <div class="label">PLAYER</div>
+        <div class="disk" id="enemy-disk" style="border-color: var(--pink);">
+            ENEMY
+            <div class="label" style="color: var(--pink);">OPPONENT</div>
         </div>
 
-        <div class="disk" id="enemy-disk">
-            ENEMY
-            <div class="label">OPPONENT</div>
+        <div class="disk" id="player-disk" onclick="app.launch()">
+            MAMG
+            <div class="label">PLAYER</div>
         </div>
     </div>
 
     <script>
         const app = {
-            score: 0,
+            wins: 9,
             isLocked: false,
 
-            attack: function() {
+            launch: function() {
                 if (this.isLocked) return;
                 this.isLocked = true;
 
                 const pDisk = document.getElementById('player-disk');
                 const eDisk = document.getElementById('enemy-disk');
-                const body = document.getElementById('body-node');
+                const body = document.getElementById('main-body');
 
-                // 1. بدء الهجوم
-                pDisk.classList.add('jump-attack');
+                // 1. إطلاق حركة القوس
+                pDisk.classList.add('arc-attack');
 
-                // 2. لحظة الارتطام
+                // 2. توقيت الارتطام (عند نهاية القوس)
                 setTimeout(() => {
                     body.classList.add('shake');
                     
-                    // إذا نجحت الضربة، يبدأ قرص الخصم بالدوران والانقلاب
-                    if (Math.random() > 0.4) {
+                    // فرصة الانقلاب مع الدوران
+                    if (Math.random() > 0.3) {
                         eDisk.classList.remove('enemy-spin');
-                        void eDisk.offsetWidth; // ريسيت للأنيميشن
+                        void eDisk.offsetWidth; 
                         eDisk.classList.add('enemy-spin');
                         
                         setTimeout(() => {
                             eDisk.classList.add('flipped');
-                            this.score++;
-                            document.getElementById('score').innerText = this.score;
-                        }, 300);
+                            this.wins++;
+                            document.getElementById('wins-val').innerText = this.wins;
+                        }, 350);
                     }
 
                     setTimeout(() => body.classList.remove('shake'), 200);
-                }, 350);
+                }, 750); // يتزامن مع نهاية الأنميشن
 
-                // 3. إنهاء الحركة
+                // 3. العودة للمكان الأصلي
                 setTimeout(() => {
-                    pDisk.classList.remove('jump-attack');
+                    pDisk.classList.remove('arc-attack');
                     this.isLocked = false;
-                }, 500);
+                }, 1500);
             }
         };
     </script>
