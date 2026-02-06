@@ -3,93 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>الضمان الرقمي | 2026</title>
+    <title>الضمان الرقمي | تحديد التاريخ</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #050505; --card: #111; --accent: #00ff88; --white: #ffffff; }
-        body { 
-            margin: 0; background: var(--bg); color: var(--white); 
-            font-family: 'Cairo', sans-serif; display: flex; flex-direction: column; align-items: center;
-        }
-        .container { width: 90%; max-width: 400px; padding-top: 60px; }
-        .header { text-align: center; margin-bottom: 40px; }
-        .header h1 { font-size: 24px; font-weight: 300; letter-spacing: 2px; }
-
-        /* البطاقة المعتمدة */
+        :root { --bg: #000; --card: #111; --accent: #00ff88; --white: #fff; }
+        body { margin: 0; background: var(--bg); color: var(--white); font-family: 'Cairo', sans-serif; }
+        .container { padding: 40px 20px; padding-bottom: 120px; }
+        header { text-align: center; margin-bottom: 30px; }
+        
         .card {
             background: var(--card); border: 1px solid #222; border-radius: 20px;
-            padding: 25px; margin-bottom: 20px; position: relative;
+            padding: 20px; margin-bottom: 15px; position: relative;
         }
-        .label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 2px; }
-        .p-name { font-size: 18px; margin: 10px 0; font-weight: 700; }
-        .status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--accent); }
-        .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent); }
+        .label { font-size: 10px; color: #555; letter-spacing: 2px; text-transform: uppercase; }
+        .p-name { font-size: 18px; margin: 8px 0; font-weight: 700; color: var(--accent); }
         
-        .details { margin-top: 25px; display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 15px; }
-        .item div:first-child { font-size: 9px; color: #444; }
-        .item div:last-child { font-size: 12px; font-weight: bold; }
+        .details { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #222; padding-top: 15px; }
+        .item div:first-child { font-size: 9px; color: #666; margin-bottom: 4px; }
+        .item div:last-child { font-size: 12px; font-weight: bold; color: #eee; }
+
+        /* طبقة الكاميرا */
+        #camera-layer { position: fixed; inset: 0; background: #000; z-index: 1000; display: none; flex-direction: column; }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        .btn-capture { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); padding: 20px 40px; border-radius: 50px; background: var(--accent); border: none; font-weight: bold; font-family: 'Cairo'; }
 
         .btn-add {
-            position: fixed; bottom: 40px; width: 85%; max-width: 350px;
-            padding: 20px; background: var(--white); color: #000;
-            border: none; border-radius: 15px; font-weight: bold; cursor: pointer;
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 85%; padding: 18px; background: var(--white); color: #000;
+            border: none; border-radius: 50px; font-weight: 700; font-family: 'Cairo';
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>الضمان الرقمي</h1>
-            <p style="color: #333; font-size: 11px;">نظام توثيق الأصول العالمي</p>
-        </div>
-
-        <div id="assets-list">
-            </div>
+    <div id="camera-layer">
+        <video id="video" playsinline></video>
+        <button class="btn-capture" onclick="capture()">التقاط وتحديد التاريخ</button>
     </div>
 
-    <button class="btn-add" onclick="addNewAsset()">توثيق أصل جديد +</button>
+    <div class="container">
+        <header>
+            <h1 style="font-weight: 300; letter-spacing: 2px;">الضمان الرقمي</h1>
+            <p style="color: #444; font-size: 10px;">إدارة ممتلكاتك الموثقة</p>
+        </header>
+        <div id="assets-list"></div>
+    </div>
+
+    <button class="btn-add" onclick="openCam()">توثيق أصل جديد +</button>
 
     <script>
-        // دالة لجلب البيانات المحفوظة عند فتح الصفحة
-        window.onload = function() {
-            renderAssets();
-        };
+        let stream = null;
 
-        function addNewAsset() {
-            const name = prompt("أدخل اسم المنتج (مثلاً: ساعة رولكس):");
-            const serial = "SN-" + Math.floor(Math.random() * 1000000); // توليد رقم عشوائي مؤقتاً
-            
-            if (name) {
-                const newAsset = { name, serial, date: new Date().toLocaleDateString('ar-SA') };
-                let assets = JSON.parse(localStorage.getItem('myAssets') || '[]');
-                assets.push(newAsset);
-                localStorage.setItem('myAssets', JSON.stringify(assets));
-                renderAssets();
-            }
+        async function openCam() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                document.getElementById('video').srcObject = stream;
+                document.getElementById('video').play();
+                document.getElementById('camera-layer').style.display = 'flex';
+            } catch (e) { alert("يرجى تفعيل الكاميرا"); }
         }
 
-        function renderAssets() {
-            const list = document.getElementById('assets-list');
-            const assets = JSON.parse(localStorage.getItem('myAssets') || '[]');
-            
-            if (assets.length === 0) {
-                list.innerHTML = `<p style="text-align:center; color:#222;">لا توجد ضمانات مسجلة بعد</p>`;
-                return;
-            }
+        function capture() {
+            const name = prompt("اسم المنتج:");
+            if (!name) return;
 
-            list.innerHTML = assets.map(asset => `
+            const expiryDate = prompt("أدخل تاريخ نهاية الضمان (مثال: 2027-05-20):");
+            if (!expiryDate) { alert("يجب تحديد تاريخ النهاية"); return; }
+
+            const now = new Date();
+            const creationTime = now.toLocaleDateString('ar-SA');
+            const serial = "ID-" + Math.random().toString(36).substr(2, 7).toUpperCase();
+
+            const asset = { name, serial, creationTime, expiryDate };
+            let list = JSON.parse(localStorage.getItem('vault_v3') || '[]');
+            list.unshift(asset);
+            localStorage.setItem('vault_v3', JSON.stringify(list));
+            
+            closeCam();
+            render();
+        }
+
+        function closeCam() {
+            if (stream) stream.getTracks().forEach(t => t.stop());
+            document.getElementById('camera-layer').style.display = 'none';
+        }
+
+        function render() {
+            const data = JSON.parse(localStorage.getItem('vault_v3') || '[]');
+            document.getElementById('assets-list').innerHTML = data.map(a => `
                 <div class="card">
-                    <div class="label">أصل موثق</div>
-                    <div class="p-name">${asset.name}</div>
-                    <div class="status"><span class="dot"></span>ضمان فعال (Verified)</div>
+                    <div class="label">موثق آمن</div>
+                    <div class="p-name">${a.name}</div>
                     <div class="details">
-                        <div class="item"><div>الرقم التسلسلي</div><div>${asset.serial}</div></div>
-                        <div class="item" style="text-align:left;"><div>تاريخ التوثيق</div><div>${asset.date}</div></div>
+                        <div class="item"><div>المعرف الرقمي</div><div>${a.serial}</div></div>
+                        <div class="item"><div>تاريخ التوثيق</div><div>${a.creationTime}</div></div>
+                        <div class="item"><div>نهاية الضمان</div><div style="color: #ff4444;">${a.expiryDate}</div></div>
                     </div>
                 </div>
             `).join('');
         }
+
+        window.onload = render;
     </script>
 </body>
 </html>
