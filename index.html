@@ -1,153 +1,129 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SOVEREIGN | OBSIDIAN</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700&family=Noto+Kufi+Arabic:wght@100;400;700&display=swap" rel="stylesheet">
+    <title>الضمان الرقمي | Digital Vault</title>
     <style>
         :root {
-            --bg: #000000;
-            --accent: #ffffff;
-            --gold-subtle: rgba(212, 175, 55, 0.4);
-            --glass: rgba(255, 255, 255, 0.02);
-            --border: rgba(255, 255, 255, 0.07);
+            --bg: #050505;
+            --card: #111111;
+            --accent: #00ff88;
+            --text: #ffffff;
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            font-family: 'Inter', 'Noto Kufi Arabic', sans-serif;
-        }
+        /* دعم الخطوط بناءً على اللغة */
+        [lang="ar"] { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; direction: rtl; }
+        [lang="en"] { font-family: -apple-system, system-ui, BlinkMacSystemFont, sans-serif; direction: ltr; }
 
         body {
-            margin: 0; padding: 0; background: var(--bg); color: var(--accent);
-            overflow: hidden; height: 100vh; display: flex; flex-direction: column;
+            margin: 0; background-color: var(--bg); color: var(--text);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; -webkit-font-smoothing: antialiased;
         }
 
-        /* الإضاءة الدرامية الخلفية */
-        .spotlight {
-            position: fixed; top: -20%; left: 50%; transform: translateX(-50%);
-            width: 140vw; height: 60vh;
-            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
-            pointer-events: none; z-index: 0;
+        .container { width: 90%; max-width: 400px; padding-top: 60px; }
+
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 26px; font-weight: 200; letter-spacing: 2px; margin: 0; }
+
+        /* البطاقة المعتمدة */
+        .warranty-card {
+            background: var(--card); border: 1px solid #222; border-radius: 24px;
+            padding: 30px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.5);
         }
 
-        /* الواجهة العلوية */
-        header {
-            padding: 60px 30px 20px; z-index: 10;
-            display: flex; justify-content: space-between; align-items: center;
+        .label { font-size: 10px; opacity: 0.4; letter-spacing: 2px; text-transform: uppercase; }
+        .p-name { font-size: 22px; margin: 15px 0; font-weight: 600; }
+        
+        .status-box { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--accent); }
+        .dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 15px var(--accent); }
+
+        .info-grid {
+            margin-top: 40px; display: flex; justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.05); padding-top: 25px;
         }
+        .item div:first-child { font-size: 10px; opacity: 0.3; margin-bottom: 8px; }
+        .item div:last-child { font-size: 14px; font-weight: 500; }
 
-        .logo { font-weight: 100; letter-spacing: 8px; font-size: 14px; opacity: 0.6; }
-        .vault-status { font-size: 10px; letter-spacing: 2px; color: var(--gold-subtle); text-transform: uppercase; }
-
-        /* محتوى الخزنة */
-        .vault-content {
-            flex: 1; overflow-y: scroll; padding: 20px 30px; z-index: 5;
-            -ms-overflow-style: none; scrollbar-width: none; /* إخفاء شريط التمرير */
+        /* الزر العالمي */
+        .action-btn {
+            position: fixed; bottom: 40px; width: 85%; max-width: 340px;
+            background: #fff; color: #000; border: none; padding: 20px;
+            border-radius: 18px; font-weight: 700; font-size: 16px; cursor: pointer;
         }
-        .vault-content::-webkit-scrollbar { display: none; }
-
-        .balance-section { margin-bottom: 50px; text-align: center; }
-        .balance-label { font-size: 12px; opacity: 0.4; letter-spacing: 2px; margin-bottom: 10px; }
-        .balance-amount { font-size: 48px; font-weight: 100; letter-spacing: -1px; }
-
-        /* بطاقات الأصول - تصميم الحد الأدنى الفاخر */
-        .asset-row {
-            padding: 25px 0; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-            transition: opacity 0.3s;
-        }
-        .asset-row:active { opacity: 0.4; }
-
-        .asset-meta h3 { margin: 0; font-size: 18px; font-weight: 400; }
-        .asset-meta p { margin: 5px 0 0; font-size: 11px; opacity: 0.3; letter-spacing: 1px; }
-
-        .asset-value { text-align: left; }
-        .status-dot { width: 4px; height: 4px; background: #00ff88; border-radius: 50%; display: inline-block; margin-right: 10px; box-shadow: 0 0 10px #00ff88; }
-
-        /* التحكم السفلي العائم */
-        .action-bar {
-            padding: 30px; z-index: 10;
-            background: linear-gradient(to top, #000 60%, transparent);
-        }
-
-        .btn-main {
-            width: 100%; padding: 20px; border: 1px solid var(--border);
-            background: var(--glass); color: #fff; border-radius: 0; /* زوايا حادة للفخامة */
-            font-size: 12px; letter-spacing: 4px; font-weight: 400;
-            backdrop-filter: blur(20px); cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .btn-main:active { background: #fff; color: #000; }
-
     </style>
 </head>
 <body>
 
-    <div class="spotlight"></div>
+    <div class="container">
+        <header class="header">
+            <h1 id="t-vault">الخزنة الرقمية</h1>
+            <p style="opacity: 0.3; font-size: 11px; margin-top: 10px;" id="t-sub">Digital Warranty Systems 2026</p>
+        </header>
 
-    <header>
-        <div class="logo">SOVEREIGN</div>
-        <div class="vault-status">SECURED // 256-BIT</div>
-    </header>
+        <div class="warranty-card">
+            <div class="label" id="t-label">أصل موثق</div>
+            <div class="p-name" id="p-name">Rolex Submariner</div>
+            <div class="status-box">
+                <span class="dot"></span>
+                <span id="t-status">ضمان نشط (Blockchain)</span>
+            </div>
 
-    <div class="vault-content">
-        <div class="balance-section">
-            <div class="balance-label">القيمة الإجمالية الموثقة</div>
-            <div class="balance-amount">$842,500.00</div>
-        </div>
-
-        <div class="asset-row">
-            <div class="asset-meta">
-                <h3>Patek Philippe</h3>
-                <p>Nautilus 5711/1A</p>
-            </div>
-            <div class="asset-value">
-                <div style="font-size: 14px;">$145k</div>
-                <div style="font-size: 9px; opacity: 0.3; text-align: left;"><span class="status-dot"></span>ACTIVE</div>
-            </div>
-        </div>
-
-        <div class="asset-row">
-            <div class="asset-meta">
-                <h3>Real Estate</h3>
-                <p>Jeddah Waterfront Villa</p>
-            </div>
-            <div class="asset-value">
-                <div style="font-size: 14px;">$650k</div>
-                <div style="font-size: 9px; opacity: 0.3; text-align: left;"><span class="status-dot"></span>ACTIVE</div>
-            </div>
-        </div>
-
-        <div class="asset-row" style="opacity: 0.4;">
-            <div class="asset-meta">
-                <h3>Tesla Model S</h3>
-                <p>Platid Edition 2026</p>
-            </div>
-            <div class="asset-value">
-                <div style="font-size: 14px;">$92k</div>
-                <div style="font-size: 9px; opacity: 0.3; text-align: left;">PENDING</div>
+            <div class="info-grid">
+                <div class="item">
+                    <div id="t-serial">الرقم التسلسلي</div>
+                    <div id="p-serial">RX-2026-SA</div>
+                </div>
+                <div class="item" style="text-align: inherit;">
+                    <div id="t-expiry">تاريخ الانتهاء</div>
+                    <div id="p-expiry">2029 / 12 / 30</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="action-bar">
-        <button class="btn-main" onclick="startScan()">توثيق أصل جديد</button>
-    </div>
+    <button class="action-btn" id="t-btn" onclick="addAsset()">إضافة ضمان جديد +</button>
 
     <script>
-        // منع التفاعل الافتراضي المزعج في iOS
-        document.addEventListener('touchmove', function (e) {
-            if (e.target.closest('.vault-content')) return;
-            e.preventDefault();
-        }, { passive: false });
+        // قاموس اللغات
+        const langData = {
+            ar: {
+                vault: "الخزنة الرقمية",
+                label: "أصل موثق",
+                status: "ضمان نشط (Blockchain)",
+                serial: "الرقم التسلسلي",
+                expiry: "تاريخ الانتهاء",
+                btn: "إضافة ضمان جديد +"
+            },
+            en: {
+                vault: "Digital Vault",
+                label: "Verified Asset",
+                status: "Active Warranty (Blockchain)",
+                serial: "Serial Number",
+                expiry: "Expiry Date",
+                btn: "Add New Warranty +"
+            }
+        };
 
-        function startScan() {
-            // تأثير اهتزاز خفيف للهاتف إذا كان مدعوماً
-            if (navigator.vibrate) navigator.vibrate(10);
-            console.log("إطلاق نظام المسح البصري...");
+        // وظيفة تغيير اللغة تلقائياً
+        function applyLanguage() {
+            const userLang = navigator.language.startsWith('ar') ? 'ar' : 'en';
+            const content = langData[userLang];
+            
+            document.documentElement.lang = userLang;
+            document.getElementById('t-vault').innerText = content.vault;
+            document.getElementById('t-label').innerText = content.label;
+            document.getElementById('t-status').innerText = content.status;
+            document.getElementById('t-serial').innerText = content.serial;
+            document.getElementById('t-expiry').innerText = content.expiry;
+            document.getElementById('t-btn').innerText = content.btn;
+        }
+
+        applyLanguage();
+
+        function addAsset() {
+            alert(document.documentElement.lang === 'ar' ? "جاري تشغيل نظام المسح..." : "Launching Scan System...");
         }
     </script>
 </body>
