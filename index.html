@@ -3,167 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VAULT | 2026 Asset Security</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;600&family=Noto+Kufi+Arabic:wght@300;700&display=swap" rel="stylesheet">
+    <title>SOVEREIGN | التوثيق السيادي</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@200;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --accent: #7000ff; /* بنفسجي ملكي */
-            --bg: #030303;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
+            --bg: #000000;
+            --surface: #0a0a0a;
+            --border: rgba(255, 255, 255, 0.05);
+            --gold: #d4af37; /* ذهبي مطفي للفخامة */
+            --safe: #00ff88;
         }
 
         body {
-            margin: 0; padding: 0; background: var(--bg);
-            font-family: 'Plus Jakarta Sans', 'Noto Kufi Arabic', sans-serif;
-            color: white; overflow: hidden;
-            display: flex; flex-direction: column; height: 100vh;
+            margin: 0; background: var(--bg); color: #fff;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* خلفية متغيرة متحركة */
-        .ambient-bg {
-            position: fixed; inset: 0; z-index: -1;
-            background: radial-gradient(circle at 50% -20%, #1e0045, transparent),
-                        radial-gradient(circle at 0% 100%, #0a0a0a, transparent);
-            filter: blur(80px); opacity: 0.6;
+        /* تأثير إضاءة خلفي خافت جداً */
+        .ambient-glow {
+            position: fixed; top: -10%; left: 50%; transform: translateX(-50%);
+            width: 80vw; height: 40vh;
+            background: radial-gradient(circle, rgba(212,175,55,0.03) 0%, transparent 70%);
+            pointer-events: none;
         }
 
         header {
-            padding: 40px 30px; display: flex; justify-content: space-between; align-items: center;
+            padding: 60px 40px 20px;
+            display: flex; justify-content: space-between; align-items: flex-end;
         }
 
-        .vault-title { font-weight: 700; font-size: 22px; letter-spacing: 2px; }
-        .user-status { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--accent); background: var(--glass); display: flex; align-items: center; justify-content: center; }
+        .brand { letter-spacing: 5px; font-weight: 200; font-size: 14px; color: var(--gold); }
+        .date { font-size: 32px; font-weight: 400; margin-top: 10px; }
 
-        /* حاوية الممتلكات */
-        .assets-grid {
-            flex: 1; padding: 0 30px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto;
-        }
+        .container { padding: 20px 30px; }
 
+        /* نظام البطاقات الفاخر (Bento Style) */
         .asset-card {
-            background: var(--glass);
+            background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 30px; padding: 25px;
-            backdrop-filter: blur(20px);
-            position: relative; overflow: hidden;
-            transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border-radius: 2px; /* زوايا حادة تعطي طابعاً رسمياً وأكثر ثقة */
+            padding: 30px;
+            margin-bottom: 20px;
+            position: relative;
+            transition: all 0.5s ease;
         }
 
-        .asset-card:active { transform: scale(0.96); background: rgba(255,255,255,0.06); }
-
-        .asset-info h3 { margin: 0; font-size: 18px; color: #fff; }
-        .asset-info p { margin: 5px 0 0; font-size: 12px; color: #888; }
-
-        .status-badge {
-            position: absolute; top: 25px; left: 25px;
-            padding: 5px 12px; border-radius: 20px; font-size: 10px;
-            background: rgba(0, 255, 136, 0.1); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.2);
+        .asset-card::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 2px; height: 0;
+            background: var(--gold); transition: 0.5s;
         }
 
-        /* زر الإضافة السحري */
-        .fab {
-            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-            width: 70px; height: 70px; border-radius: 50%;
-            background: var(--accent);
-            box-shadow: 0 0 30px rgba(112, 0, 255, 0.4);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s; z-index: 10;
+        .asset-card:hover::before { height: 100%; }
+
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
+        
+        .serial-tag { font-family: monospace; font-size: 10px; letter-spacing: 2px; color: #444; text-transform: uppercase; }
+        
+        .asset-name { font-size: 20px; font-weight: 400; letter-spacing: 1px; }
+        
+        /* مؤشر الضمان الدائري الصغير */
+        .warranty-status {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 11px; letter-spacing: 1px; color: var(--safe);
+        }
+        .dot { width: 6px; height: 6px; background: var(--safe); border-radius: 50%; box-shadow: 0 0 10px var(--safe); }
+
+        .transfer-btn {
+            margin-top: 30px; padding: 12px 0;
+            border: none; border-bottom: 1px solid var(--border);
+            background: none; color: #666; width: 100%;
+            text-align: right; cursor: pointer; font-size: 12px;
+            transition: 0.3s;
         }
 
-        .fab svg { width: 30px; height: 30px; stroke: white; fill: none; stroke-width: 2; }
+        .transfer-btn:hover { color: var(--gold); border-bottom-color: var(--gold); }
 
-        /* شاشة الكاميرا والتحليل */
-        #scanner-ui {
-            position: fixed; inset: 0; background: #000; z-index: 100;
-            display: none; flex-direction: column;
+        /* زر الإضافة - مخفي وذكي */
+        .add-trigger {
+            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
+            background: none; border: 1px solid var(--gold); color: var(--gold);
+            padding: 15px 40px; border-radius: 40px; font-size: 12px;
+            letter-spacing: 2px; cursor: pointer; backdrop-filter: blur(10px);
         }
 
-        .scan-frame {
-            flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
-        }
-
-        .scan-aim {
-            width: 250px; height: 250px; border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 40px; position: relative;
-        }
-
-        .scan-aim::before {
-            content: ''; position: absolute; inset: -2px;
-            border: 2px solid var(--accent); border-radius: 40px;
-            clip-path: inset(0 80% 80% 0); /* زاوية علوية يسرى */
-        }
-
-        .scan-line {
-            position: absolute; width: 100%; height: 2px; background: var(--accent);
-            top: 0; left: 0; box-shadow: 0 0 15px var(--accent);
-            animation: moveLine 2s infinite linear;
-        }
-
-        @keyframes moveLine { 0% { top: 0; } 100% { top: 100%; } }
-
-        .nav-bar {
-            height: 100px; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
-            display: flex; justify-content: space-around; align-items: center;
-            border-top: 1px solid var(--border);
-        }
     </style>
 </head>
 <body>
 
-    <div class="ambient-bg"></div>
+    <div class="ambient-glow"></div>
 
     <header>
-        <div class="vault-title">VAULT.AI</div>
-        <div class="user-status">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <div>
+            <div class="brand">SOVEREIGN VAULT</div>
+            <div class="date">ممتلكاتك الموثقة</div>
+        </div>
+        <div style="text-align: left;">
+            <div class="serial-tag">Node: Jeddah_01</div>
+            <div class="serial-tag">Status: Encrypted</div>
         </div>
     </header>
 
-    <div class="assets-grid">
+    <div class="container">
+        
         <div class="asset-card">
-            <span class="status-badge">موثق بالبلوكشين</span>
-            <div class="asset-info">
-                <h3>Rolex Submariner</h3>
-                <p>الرقم التسلسلي: RX-9920-X</p>
-                <p style="margin-top: 15px; font-weight: bold; color: var(--accent);">ينتهي الضمان: أكتوبر 2029</p>
+            <div class="card-header">
+                <div>
+                    <div class="serial-tag">ID: 882-991-002</div>
+                    <div class="asset-name">Patek Philippe Nautilus</div>
+                </div>
+                <div class="warranty-status">
+                    <div class="dot"></div>
+                    موثق
+                </div>
             </div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                    <div class="serial-tag">القيمة السوقية التقريبية</div>
+                    <div style="font-size: 24px; font-weight: 200;">$124,000</div>
+                </div>
+                <div style="text-align: left;">
+                    <div class="serial-tag">ينتهي الضمان</div>
+                    <div style="font-size: 14px;">2031 / 05 / 12</div>
+                </div>
+            </div>
+            <button class="transfer-btn">نقل ملكية الأصول رقمياً ←</button>
         </div>
 
-        <div class="asset-card" style="opacity: 0.5;">
-            <span class="status-badge" style="color: #ffaa00; background: rgba(255,170,0,0.1); border-color: rgba(255,170,0,0.2);">قيد الفحص</span>
-            <div class="asset-info">
-                <h3>MacBook Pro M5</h3>
-                <p>جاري تحليل البصمة المصنعية...</p>
+        <div class="asset-card">
+            <div class="card-header">
+                <div>
+                    <div class="serial-tag">ID: 102-445-982</div>
+                    <div class="asset-name">Tesla Model S Plaid</div>
+                </div>
+                <div class="warranty-status">
+                    <div class="dot"></div>
+                    موثق
+                </div>
             </div>
+            <button class="transfer-btn">نقل ملكية الأصول رقمياً ←</button>
         </div>
+
     </div>
 
-    <div class="fab" onclick="openScanner()">
-        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
-    </div>
+    <button class="add-trigger">توثيق أصل جديد +</button>
 
-    <div id="scanner-ui">
-        <div style="padding: 40px; display: flex; justify-content: space-between;">
-            <span onclick="closeScanner()" style="cursor: pointer;">إلغاء</span>
-            <span>تحليل ذكي للمنتج</span>
-        </div>
-        <div class="scan-frame">
-            <div class="scan-aim">
-                <div class="scan-line"></div>
-            </div>
-        </div>
-        <div style="padding: 60px; text-align: center; color: #888; font-size: 14px;">
-            وجه الكاميرا نحو الرقم التسلسلي للمنتج
-        </div>
-    </div>
-
-    <script>
-        function openScanner() {
-            document.getElementById('scanner-ui').style.display = 'flex';
-        }
-        function closeScanner() {
-            document.getElementById('scanner-ui').style.display = 'none';
-        }
-    </script>
 </body>
 </html>
