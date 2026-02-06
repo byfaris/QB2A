@@ -3,138 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FARES FUTURE STORE | 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Cairo:wght@300;700&display=swap" rel="stylesheet">
+    <title>خزنة المشتريات | FARES VAULT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --accent: #00f2ff; /* لون المستقبل */
-            --bg: #030712;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
+            --neon: #00f2ff;
+            --dark-bg: #050505;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --border: rgba(0, 242, 255, 0.2);
         }
 
         body {
-            margin: 0; background-color: var(--bg); color: #fff;
-            font-family: 'Cairo', sans-serif; overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% 50%, #111827 0%, #030712 100%);
+            background-color: var(--dark-bg);
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            margin: 0; padding: 20px;
         }
 
-        /* خلفية متحركة خفيفة */
-        body::before {
-            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.2; pointer-events: none;
+        .vault-header {
+            text-align: center; margin-bottom: 40px; padding: 20px;
+            border-bottom: 1px dashed var(--border);
         }
 
-        header {
-            padding: 30px; display: flex; justify-content: space-between; align-items: center;
-            backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 100;
+        .vault-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px; color: var(--neon); text-shadow: 0 0 10px var(--neon);
         }
 
-        .logo { 
-            font-family: 'Orbitron', sans-serif; font-size: 24px; font-weight: 700; 
-            letter-spacing: 3px; color: var(--accent); text-shadow: 0 0 15px var(--accent);
+        /* حاوية الخزنة */
+        .vault-container {
+            max-width: 600px; margin: 0 auto;
         }
 
-        .container {
-            max-width: 1200px; margin: 60px auto; padding: 0 20px;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px;
+        /* بطاقة المنتج الرقمي داخل الخزنة */
+        .vault-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* بطاقة المنتج المستقبلية */
-        .future-card {
-            background: var(--glass); backdrop-filter: blur(10px);
-            border: 1px solid var(--border); border-radius: 24px; padding: 25px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative; overflow: hidden;
+        .item-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .item-title { font-weight: 700; color: #fff; }
+        .purchase-date { font-size: 11px; color: #64748b; }
+
+        /* منطقة كود التفعيل */
+        .code-area {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .future-card:hover {
-            transform: translateY(-15px) scale(1.02);
-            border-color: var(--accent);
-            box-shadow: 0 20px 40px rgba(0, 242, 255, 0.1);
+        .serial-code {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            color: var(--neon);
+            letter-spacing: 2px;
         }
 
-        .future-card::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(0, 242, 255, 0.05) 0%, transparent 70%);
-            opacity: 0; transition: 0.4s;
+        .copy-btn {
+            background: var(--neon);
+            color: #000;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        .future-card:hover::before { opacity: 1; }
+        .copy-btn:active { transform: scale(0.9); }
 
-        .token-icon {
-            width: 60px; height: 60px; background: rgba(0, 242, 255, 0.1);
-            border-radius: 16px; display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: var(--accent); margin-bottom: 20px;
-            box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2);
+        /* حالة المنتج */
+        .status-badge {
+            font-size: 10px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            border: 1px solid #00ff88;
         }
-
-        .title { font-size: 20px; font-weight: 700; margin: 10px 0; letter-spacing: 1px; }
-        .desc { font-size: 13px; color: #94a3b8; line-height: 1.6; margin-bottom: 20px; }
-
-        .price-tag {
-            display: flex; justify-content: space-between; align-items: center;
-            border-top: 1px solid var(--border); padding-top: 20px;
-        }
-
-        .price { font-family: 'Orbitron', sans-serif; font-size: 22px; color: var(--accent); }
-
-        .buy-now {
-            background: var(--accent); color: #000; border: none;
-            padding: 12px 25px; border-radius: 12px; font-weight: 700;
-            cursor: pointer; transition: 0.3s; font-family: 'Cairo';
-        }
-
-        .buy-now:hover { box-shadow: 0 0 20px var(--accent); transform: scale(1.05); }
-
-        /* شارة الحالة */
-        .status { font-size: 10px; color: #00ff88; text-transform: uppercase; letter-spacing: 2px; }
 
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">FARES.V3</div>
-        <div style="font-size: 14px; opacity: 0.6;">System Status: <span style="color: #00ff88;">Online</span></div>
-    </header>
-
-    <div class="container">
-        <div class="future-card">
-            <div class="status">● Instant Delivery</div>
-            <div class="token-icon">⚡</div>
-            <div class="title">اشتراك الذكاء الاصطناعي</div>
-            <p class="desc">وصول كامل لمحركات التوليد المتقدمة 2026 بخصوصية تامة.</p>
-            <div class="price-tag">
-                <div class="price">$19.00</div>
-                <button class="buy-now">امتلاك الآن</button>
-            </div>
-        </div>
-
-        <div class="future-card">
-            <div class="status">● Verified Code</div>
-            <div class="token-icon">🔑</div>
-            <div class="title">مفتاح نظام التشغيل</div>
-            <p class="desc">تفعيل أبدي لنظم الحوسبة السحابية مع دعم التحديثات الأمنية.</p>
-            <div class="price-tag">
-                <div class="price">$45.00</div>
-                <button class="buy-now">امتلاك الآن</button>
-            </div>
-        </div>
-
-        <div class="future-card">
-            <div class="status">● Premium Access</div>
-            <div class="token-icon">🎮</div>
-            <div class="title">بطاقة شحن الألعاب</div>
-            <p class="desc">رصيد رقمي صالح للاستخدام في كافة منصات الميتافيرس والألعاب.</p>
-            <div class="price-tag">
-                <div class="price">$100.00</div>
-                <button class="buy-now">امتلاك الآن</button>
-            </div>
-        </div>
+    <div class="vault-header">
+        <h1>DIGITAL VAULT v3.0</h1>
+        <p style="font-size: 12px; opacity: 0.5;">مرحباً فارس، منتجاتك الرقمية مؤمنة هنا</p>
     </div>
 
+    <div class="vault-container">
+        
+        <div class="vault-item">
+            <div class="item-info">
+                <div>
+                    <div class="item-title">Windows 11 Pro Key</div>
+                    <div class="purchase-date">تم الشراء: 2026/02/06</div>
+                </div>
+                <div class="status-badge">فعال</div>
+            </div>
+            <div class="code-area">
+                <span class="serial-code" id="code1">XXXX-5521-FARS-2026</span>
+                <button class="copy-btn" onclick="copyCode('code1')">نسخ</button>
+            </div>
+        </div>
+
+        <div class="vault-item">
+            <div class="item-info">
+                <div>
+                    <div class="item-title">Canva Pro Lifetime</div>
+                    <div class="purchase-date">تم الشراء: 2026/01/15</div>
+                </div>
+                <div class="status-badge">فعال</div>
+            </div>
+            <div class="code-area">
+                <span class="serial-code" id="code2">PREM-CNVA-9901-X</span>
+                <button class="copy-btn" onclick="copyCode('code2')">نسخ</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function copyCode(id) {
+            const codeText = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(codeText);
+            
+            // تغيير نص الزر مؤقتاً للتفاعل مع المستخدم
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "تم النسخ!";
+            btn.style.background = "#00ff88";
+            
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.background = "#00f2ff";
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
