@@ -1,83 +1,131 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QB2A | قبعا - ثورة البشر</title>
+    <title>QB2A | ثورة البشر</title>
     <style>
-        :root {
-            --neon-red: #ff0044; /* لون الذكاء الاصطناعي */
-            --neon-blue: #00f2ff; /* لون البشر */
-            --bg: #050505;
+        :root { --main-blue: #00f2ff; --ai-red: #ff0044; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; touch-action: none; }
+        
+        /* واجهة المعلومات */
+        #hud {
+            position: absolute; top: 10px; left: 10px; z-index: 10;
+            color: var(--main-blue); font-family: monospace; pointer-events: none;
         }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: #fff; overflow: hidden; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .server-status { color: #0f0; font-size: 12px; }
 
-        /* واجهة البداية */
-        #game-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 100;
+        /* أدوات التحكم للجوال (تظهر فقط في وضع اللمس) */
+        #joystick-container {
+            position: absolute; bottom: 40px; left: 40px; width: 120px; height: 120px;
+            background: rgba(255,255,255,0.1); border-radius: 50%; display: none;
         }
-
-        .title { font-size: 80px; font-weight: 900; letter-spacing: 10px; color: var(--neon-blue); text-shadow: 0 0 20px var(--neon-blue); margin-bottom: 10px; }
-        .subtitle { font-size: 18px; margin-bottom: 40px; color: #888; }
-
-        .btn-start {
-            padding: 15px 50px; border: 2px solid var(--neon-blue); background: none;
-            color: var(--neon-blue); font-size: 24px; font-weight: bold; cursor: pointer;
-            border-radius: 5px; transition: 0.3s; box-shadow: 0 0 15px rgba(0,242,255,0.2);
+        #joystick-knob {
+            position: absolute; width: 50px; height: 50px; background: var(--main-blue);
+            border-radius: 50%; top: 35px; left: 35px;
         }
-        .btn-start:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 30px var(--neon-blue); }
-
-        /* نظام اللغات */
-        .lang-switch { position: absolute; top: 20px; right: 20px; color: #555; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <div id="game-overlay">
-        <div class="lang-switch" id="lang-info">Detecting language...</div>
-        <div class="title">QB2A</div>
-        <div class="subtitle" id="tagline">Humanity vs Artificial Intelligence</div>
-        <button class="btn-start" id="start-btn">ENTER BATTLE</button>
+    <div id="hud">
+        <div id="player-count">المتصلين: 1/100</div>
+        <div class="server-status" id="ping">السيرفر العالمي: متصل (Global-1)</div>
     </div>
+
+    <div id="joystick-container"><div id="joystick-knob"></div></div>
 
     <canvas id="gameCanvas"></canvas>
 
     <script>
-        // 1. اكتشاف لغة المتصفح وتغيير النصوص
-        const translations = {
-            ar: { tagline: "ثورة البشر ضد الذكاء الاصطناعي", btn: "دخول المعركة", detected: "اللغة المستكشفة: العربية" },
-            en: { tagline: "Human Revolution vs AI", btn: "ENTER BATTLE", detected: "Language: English" }
-        };
-
-        const userLang = navigator.language.startsWith('ar') ? 'ar' : 'en';
-        document.getElementById('tagline').innerText = translations[userLang].tagline;
-        document.getElementById('start-btn').innerText = translations[userLang].btn;
-        document.getElementById('lang-info').innerText = translations[userLang].detected;
-        if(userLang === 'ar') document.body.style.direction = 'rtl';
-
-        // 2. إعداد شاشة اللعب (Canvas) لدعم الجوال والكمبيوتر
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        let players = [];
+        let enemies = [];
+        let joystickActive = false;
 
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        // اكتشاف نوع الجهاز لتفعيل أدوات التحكم
+        if ('ontouchstart' in window) {
+            document.getElementById('joystick-container').style.display = 'block';
         }
-        window.addEventListener('resize', resize);
-        resize();
 
-        // 3. منطق بداية اللعبة
-        document.getElementById('start-btn').onclick = () => {
-            document.getElementById('game-overlay').style.display = 'none';
-            initGame();
+        const player = {
+            id: "p1",
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2,
+            size: 20,
+            color: "#00f2ff",
+            speed: 5,
+            bullets: []
         };
 
-        function initGame() {
-            console.log("QB2A System Online...");
-            // هنا سنبدأ ببناء نظام القتال (Combat System)
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            animate();
         }
+
+        // تحكم لوحة المفاتيح (كمبيوتر)
+        const keys = {};
+        window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+        window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+        function handleInput() {
+            if (keys['w'] || keys['s'] || keys['a'] || keys['d']) {
+                if (keys['w']) player.y -= player.speed;
+                if (keys['s']) player.y += player.speed;
+                if (keys['a']) player.x -= player.speed;
+                if (keys['d']) player.x += player.speed;
+            }
+        }
+
+        function drawPlayer(p) {
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = p.color;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            
+            // رسم اسم اللاعب
+            ctx.fillStyle = "#fff";
+            ctx.font = "12px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("بشري_1", p.x, p.y - 30);
+        }
+
+        function drawAIEnemy() {
+            // منطق بسيط لعدو ذكاء اصطناعي (مكعب أحمر)
+            ctx.fillStyle = "#ff0044";
+            ctx.fillRect(100, 100, 30, 30); // مثال لموقع العدو
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // رسم شبكة الخلفية (Grid) لتعطي إحساس السيرفر
+            ctx.strokeStyle = "#111";
+            for(let i=0; i<canvas.width; i+=50) {
+                ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke();
+            }
+            for(let i=0; i<canvas.height; i+=50) {
+                ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(canvas.width,i); ctx.stroke();
+            }
+
+            handleInput();
+            drawPlayer(player);
+            drawAIEnemy();
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        init();
     </script>
 </body>
 </html>
