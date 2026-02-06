@@ -2,193 +2,168 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>QB2A | ثبات كامل</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VAULT | 2026 Asset Security</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;600&family=Noto+Kufi+Arabic:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        :root { --blue: #00f2ff; --red: #ff0044; }
-        
-        /* تعطيل التكبير والإيماءات نهائياً */
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            overflow: hidden; background: #000; 
-            touch-action: none; /* يمنع التكبير الافتراضي */
-            -webkit-user-select: none; /* منع تحديد النص */
-            user-select: none;
-            -webkit-touch-callout: none; /* منع القائمة المنبثقة في iOS */
-        }
-        
-        canvas { display: block; width: 100%; height: 100%; touch-action: none; }
-
-        #ui-layer {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 10; font-family: sans-serif;
-            padding: 20px; box-sizing: border-box;
-        }
-        .stat { color: var(--blue); font-weight: bold; font-size: 18px; }
-
-        .ctrl-zone {
-            position: absolute; bottom: 30px; width: 100%; height: 150px;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 30px; box-sizing: border-box; pointer-events: none;
-        }
-        
-        .joy-area {
-            width: 120px; height: 120px; background: rgba(0,242,255,0.1);
-            border: 2px solid var(--blue); border-radius: 50%; 
-            pointer-events: auto; position: relative; touch-action: none;
-        }
-        
-        #stick {
-            width: 50px; height: 50px; background: var(--blue); 
-            border-radius: 50%; position: absolute; top: 35px; left: 35px;
-            pointer-events: none;
-        }
-        
-        .fire-btn {
-            width: 90px; height: 90px; background: rgba(255,0,68,0.2);
-            border: 3px solid var(--red); border-radius: 50%;
-            color: white; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; pointer-events: auto; touch-action: none;
+        :root {
+            --accent: #7000ff; /* بنفسجي ملكي */
+            --bg: #030303;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
         }
 
-        #start-screen {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.9);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; color: white; text-align: center; touch-action: none;
+        body {
+            margin: 0; padding: 0; background: var(--bg);
+            font-family: 'Plus Jakarta Sans', 'Noto Kufi Arabic', sans-serif;
+            color: white; overflow: hidden;
+            display: flex; flex-direction: column; height: 100vh;
         }
-        .card {
-            border: 2px solid var(--blue); padding: 15px; margin: 10px; width: 200px;
-            cursor: pointer; background: rgba(255,255,255,0.05); pointer-events: auto;
+
+        /* خلفية متغيرة متحركة */
+        .ambient-bg {
+            position: fixed; inset: 0; z-index: -1;
+            background: radial-gradient(circle at 50% -20%, #1e0045, transparent),
+                        radial-gradient(circle at 0% 100%, #0a0a0a, transparent);
+            filter: blur(80px); opacity: 0.6;
+        }
+
+        header {
+            padding: 40px 30px; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .vault-title { font-weight: 700; font-size: 22px; letter-spacing: 2px; }
+        .user-status { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--accent); background: var(--glass); display: flex; align-items: center; justify-content: center; }
+
+        /* حاوية الممتلكات */
+        .assets-grid {
+            flex: 1; padding: 0 30px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto;
+        }
+
+        .asset-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 30px; padding: 25px;
+            backdrop-filter: blur(20px);
+            position: relative; overflow: hidden;
+            transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .asset-card:active { transform: scale(0.96); background: rgba(255,255,255,0.06); }
+
+        .asset-info h3 { margin: 0; font-size: 18px; color: #fff; }
+        .asset-info p { margin: 5px 0 0; font-size: 12px; color: #888; }
+
+        .status-badge {
+            position: absolute; top: 25px; left: 25px;
+            padding: 5px 12px; border-radius: 20px; font-size: 10px;
+            background: rgba(0, 255, 136, 0.1); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        /* زر الإضافة السحري */
+        .fab {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            width: 70px; height: 70px; border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 30px rgba(112, 0, 255, 0.4);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s; z-index: 10;
+        }
+
+        .fab svg { width: 30px; height: 30px; stroke: white; fill: none; stroke-width: 2; }
+
+        /* شاشة الكاميرا والتحليل */
+        #scanner-ui {
+            position: fixed; inset: 0; background: #000; z-index: 100;
+            display: none; flex-direction: column;
+        }
+
+        .scan-frame {
+            flex: 1; position: relative; display: flex; align-items: center; justify-content: center;
+        }
+
+        .scan-aim {
+            width: 250px; height: 250px; border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 40px; position: relative;
+        }
+
+        .scan-aim::before {
+            content: ''; position: absolute; inset: -2px;
+            border: 2px solid var(--accent); border-radius: 40px;
+            clip-path: inset(0 80% 80% 0); /* زاوية علوية يسرى */
+        }
+
+        .scan-line {
+            position: absolute; width: 100%; height: 2px; background: var(--accent);
+            top: 0; left: 0; box-shadow: 0 0 15px var(--accent);
+            animation: moveLine 2s infinite linear;
+        }
+
+        @keyframes moveLine { 0% { top: 0; } 100% { top: 100%; } }
+
+        .nav-bar {
+            height: 100px; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; align-items: center;
+            border-top: 1px solid var(--border);
         }
     </style>
 </head>
 <body>
 
-    <div id="start-screen">
-        <h1 style="color:var(--blue)">QB2A: ثورة البشر</h1>
-        <div class="card" onclick="startGame('assault')">فصيل المهاجم</div>
-        <div class="card" onclick="startGame('hacker')">فصيل الهاكر</div>
-    </div>
+    <div class="ambient-bg"></div>
 
-    <div id="ui-layer">
-        <div class="stat" id="score">النقاط: 0</div>
-    </div>
-
-    <div class="ctrl-zone">
-        <div class="joy-area" id="joy-base">
-            <div id="stick"></div>
+    <header>
+        <div class="vault-title">VAULT.AI</div>
+        <div class="user-status">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         </div>
-        <div class="fire-btn" id="fire-trigger">FIRE</div>
+    </header>
+
+    <div class="assets-grid">
+        <div class="asset-card">
+            <span class="status-badge">موثق بالبلوكشين</span>
+            <div class="asset-info">
+                <h3>Rolex Submariner</h3>
+                <p>الرقم التسلسلي: RX-9920-X</p>
+                <p style="margin-top: 15px; font-weight: bold; color: var(--accent);">ينتهي الضمان: أكتوبر 2029</p>
+            </div>
+        </div>
+
+        <div class="asset-card" style="opacity: 0.5;">
+            <span class="status-badge" style="color: #ffaa00; background: rgba(255,170,0,0.1); border-color: rgba(255,170,0,0.2);">قيد الفحص</span>
+            <div class="asset-info">
+                <h3>MacBook Pro M5</h3>
+                <p>جاري تحليل البصمة المصنعية...</p>
+            </div>
+        </div>
     </div>
 
-    <canvas id="gameCanvas"></canvas>
+    <div class="fab" onclick="openScanner()">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+    </div>
+
+    <div id="scanner-ui">
+        <div style="padding: 40px; display: flex; justify-content: space-between;">
+            <span onclick="closeScanner()" style="cursor: pointer;">إلغاء</span>
+            <span>تحليل ذكي للمنتج</span>
+        </div>
+        <div class="scan-frame">
+            <div class="scan-aim">
+                <div class="scan-line"></div>
+            </div>
+        </div>
+        <div style="padding: 60px; text-align: center; color: #888; font-size: 14px;">
+            وجه الكاميرا نحو الرقم التسلسلي للمنتج
+        </div>
+    </div>
 
     <script>
-        // --- حماية إضافية من التكبير عبر JS ---
-        document.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 1) e.preventDefault(); 
-        }, { passive: false });
-
-        let lastTouchTime = 0;
-        document.addEventListener('touchend', (e) => {
-            const now = Date.now();
-            if (now - lastTouchTime <= 300) e.preventDefault();
-            lastTouchTime = now;
-        }, false);
-
-        // --- باقي كود اللعبة المستقر ---
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const joyBase = document.getElementById('joy-base');
-        const stick = document.getElementById('stick');
-        
-        let score = 0;
-        let enemies = [];
-        let bullets = [];
-        let gameActive = false;
-        let moveDir = { x: 0, y: 0 };
-        const keys = {};
-        const player = { x: 0, y: 0, size: 15, speed: 5 };
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            player.x = canvas.width / 2;
-            player.y = canvas.height / 2;
+        function openScanner() {
+            document.getElementById('scanner-ui').style.display = 'flex';
         }
-        window.addEventListener('resize', resize);
-        resize();
-
-        let isMoving = false;
-        joyBase.onpointerdown = (e) => { isMoving = true; handleMove(e); };
-        window.onpointermove = (e) => { if(isMoving) handleMove(e); };
-        window.onpointerup = () => { 
-            isMoving = false; 
-            stick.style.transform = `translate(0,0)`;
-            moveDir = { x: 0, y: 0 };
-        };
-
-        function handleMove(e) {
-            const rect = joyBase.getBoundingClientRect();
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            let dx = e.clientX - cx;
-            let dy = e.clientY - cy;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            const limit = 40;
-            if(dist > limit) { dx *= limit/dist; dy *= limit/dist; }
-            stick.style.transform = `translate(${dx}px, ${dy}px)`;
-            moveDir = { x: dx/limit, y: dy/limit };
+        function closeScanner() {
+            document.getElementById('scanner-ui').style.display = 'none';
         }
-
-        document.getElementById('fire-trigger').onpointerdown = (e) => {
-            e.preventDefault();
-            bullets.push({ x: player.x, y: player.y, vx: 0, vy: -10 });
-        };
-
-        window.onkeydown = (e) => keys[e.key.toLowerCase()] = true;
-        window.onkeyup = (e) => keys[e.key.toLowerCase()] = false;
-
-        function startGame(type) {
-            document.getElementById('start-screen').style.display = 'none';
-            player.speed = (type === 'hacker') ? 7 : 4;
-            gameActive = true;
-        }
-
-        function update() {
-            if(!gameActive) return;
-            if(keys['w']) player.y -= player.speed;
-            if(keys['s']) player.y += player.speed;
-            if(keys['a']) player.x -= player.speed;
-            if(keys['d']) player.x += player.speed;
-            player.x += moveDir.x * player.speed;
-            player.y += moveDir.y * player.speed;
-
-            if(Math.random() < 0.02) enemies.push({x: Math.random()*canvas.width, y: -20, s: 2});
-            
-            enemies.forEach((en, i) => {
-                en.y += en.s;
-                bullets.forEach((b, bi) => {
-                    if(Math.hypot(b.x - en.x, b.y - en.y) < 20) {
-                        enemies.splice(i, 1); bullets.splice(bi, 1);
-                        score += 10; document.getElementById('score').innerText = "النقاط: " + score;
-                    }
-                });
-            });
-            bullets.forEach((b, i) => { b.y += b.vy; if(b.y < -50) bullets.splice(i,1); });
-        }
-
-        function draw() {
-            ctx.fillStyle = 'black'; ctx.fillRect(0,0,canvas.width, canvas.height);
-            if(!gameActive) return;
-            ctx.fillStyle = '#00f2ff'; ctx.beginPath();
-            ctx.arc(player.x, player.y, player.size, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = 'red'; enemies.forEach(en => ctx.fillRect(en.x, en.y, 20, 20));
-            ctx.fillStyle = 'white'; bullets.forEach(b => ctx.fillRect(b.x, b.y, 4, 10));
-        }
-
-        function loop() { update(); draw(); requestAnimationFrame(loop); }
-        loop();
     </script>
 </body>
 </html>
