@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE SECRET FILE | الملف السري</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <title>THE NULL ENTITY | الوجود السري</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --dark-void: #000000;
+            --ghost-light: #00ffff; /* أزرق سماوي خفيف لإيحاء الأطياف */
+            --distress-red: #ff0055;
+        }
+
         body {
-            background-color: #000;
+            background-color: var(--dark-void);
             color: #fff;
             font-family: 'Cairo', sans-serif;
             display: flex;
@@ -16,69 +22,143 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
+            position: relative; /* للسماح بتأثيرات الخلفية */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewport="0 0 16 16" version="1.1" id="svg_cursor"><circle cx="8" cy="8" r="4" fill="%2300ffff"/></svg>') 16 16, auto;
         }
 
-        .payment-card {
-            border: 1px solid #1a1a1a;
-            padding: 40px;
-            border-radius: 20px;
+        /* تأثير الخلفية المزعج (Flickering Grid) */
+        .background-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: flicker 10s infinite alternate;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.1; }
+            50% { opacity: 0.05; }
+            100% { opacity: 0.1; }
+        }
+
+        .main-container {
+            border: 1px solid var(--ghost-light);
+            padding: 50px;
+            border-radius: 10px;
             text-align: center;
-            background: linear-gradient(145deg, #050505, #111);
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.05);
-            max-width: 400px;
-            transition: 0.5s;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.2);
+            max-width: 500px;
+            z-index: 10;
+            position: relative;
         }
 
-        .payment-card:hover {
-            border-color: #00f2ff;
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.15);
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 25px;
+            color: var(--ghost-light);
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
         }
-
-        h1 { font-size: 1.5rem; margin-bottom: 20px; letter-spacing: 1px; }
-        .price { font-size: 2.5rem; font-weight: bold; color: #00f2ff; margin-bottom: 30px; }
         
-        .buy-btn {
-            background: #fff;
-            color: #000;
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .price-display {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: var(--distress-red); /* لون أحمر للإيحاء بالتحذير */
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(255, 0, 85, 0.6);
+            letter-spacing: 2px;
+        }
+        
+        .access-btn {
+            background: var(--distress-red);
+            color: #fff;
             border: none;
-            padding: 15px 40px;
-            border-radius: 50px;
+            padding: 18px 50px;
+            border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.4);
         }
 
-        .buy-btn:hover {
-            background: #00f2ff;
-            transform: scale(1.05);
+        .access-btn:hover {
+            background: #ff3377;
+            transform: scale(1.03);
+            box-shadow: 0 0 35px rgba(255, 0, 85, 0.6);
         }
 
-        .footer-note {
+        .footer-glitch {
             position: absolute;
-            bottom: 20px;
-            font-size: 0.8rem;
-            color: #333;
+            bottom: 15px;
+            font-size: 0.7rem;
+            color: #222;
+            animation: glitch-text 5s infinite alternate;
+            pointer-events: none;
         }
+
+        @keyframes glitch-text {
+            0% { transform: skewX(0deg); color: #222; }
+            20% { transform: skewX(5deg); color: #333; }
+            40% { transform: skewX(-5deg); color: #222; }
+            60% { transform: skewX(3deg); color: #333; }
+            80% { transform: skewX(-3deg); color: #222; }
+            100% { transform: skewX(0deg); color: #222; }
+        }
+
+        /* الصوت المحيطي */
+        audio { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="payment-card">
-        <h1>صنف شراء الملف السري للغة</h1>
-        <p>مجلد مشفر يحتوي على أسرار لا تظهر للعامة.</p>
-        <div class="price">4.99$</div>
-        <button class="buy-btn" onclick="processPayment()">امتلكه الآن</button>
+    <div class="background-grid"></div>
+
+    <div class="main-container">
+        <h1>...وجود سري غير مفهوم...</h1>
+        <p>ملف "اللغة المنفية" - يتجاوز إدراك البشر. هل أنت مستعد لما لا يجب رؤيته؟</p>
+        <div class="price-display">4.99$</div>
+        <button class="access-btn" onclick="initiateAccess()">وصول مشفر</button>
     </div>
 
-    <div class="footer-note">بوابة دفع مشفرة 256-bit</div>
+    <div class="footer-glitch">ERROR_CODE_404_REALITY_NOT_FOUND</div>
+
+    <audio id="ambient-audio" loop autoplay>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-drone-051.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-drone-051.ogg" type="audio/ogg">
+        متصفحك لا يدعم تشغيل الصوت.
+    </audio>
 
     <script>
-        function processPayment() {
-            // محاكاة بوابة الدفع
-            alert("سيتم تحويلك الآن لتأمين عملية الشراء...");
-            // هنا يتم الربط مع Stripe أو PayPal
-            window.location.href = "YOUR_PAYMENT_LINK_HERE";
+        document.addEventListener('DOMContentLoaded', () => {
+            const audio = document.getElementById('ambient-audio');
+            // محاولة تشغيل الصوت تلقائياً
+            audio.play().catch(e => {
+                console.log("Audio autoplay blocked. User interaction required.");
+                // رسالة للمستخدم لتشغيل الصوت يدوياً
+                document.body.addEventListener('click', () => audio.play(), { once: true });
+            });
+        });
+
+        function initiateAccess() {
+            // محاكاة عملية الدفع الغامضة
+            alert("فحص البروتوكولات الأمنية... قد يستغرق الأمر أكثر مما تتوقع.");
+            window.location.href = "YOUR_SECURE_PAYMENT_GATEWAY_URL_HERE";
         }
     </script>
 </body>
