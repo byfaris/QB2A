@@ -3,151 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL_VOID | 終端虛空</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Noto+Sans+TC:wght@900&display=swap" rel="stylesheet">
+    <title>GRID_01 | Collective Intuition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        :root { --danger: #ff0000; --terminal: #00f2ff; --void: #000; }
-        * { cursor: none !important; margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #000000;
+            --accent: #00f2ff;
+            --text: #ffffff;
+            --grid-color: rgba(255, 255, 255, 0.05);
+        }
 
         body {
-            background: var(--void); color: white;
-            font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-            overflow: hidden; perspective: 1000px;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
-        .vignette {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 30%, black 150%);
-            pointer-events: none; z-index: 500;
+        /* خلفية الشبكة المتحركة */
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: rotate(-15deg);
+            z-index: -1;
+            animation: moveGrid 20s linear infinite;
         }
 
-        .glitch-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 1000; opacity: 0;
-            mix-blend-mode: exclusion;
+        @keyframes moveGrid {
+            from { transform: translate(0, 0) rotate(-15deg); }
+            to { transform: translate(-50px, -50px) rotate(-15deg); }
         }
 
-        .active-glitch { animation: chaos 0.1s infinite; opacity: 0.3; }
-        @keyframes chaos {
-            0% { background: var(--danger); transform: translate(2px, 2px); }
-            50% { background: var(--terminal); transform: translate(-2px, -2px); }
-            100% { background: transparent; }
+        .main-container {
+            text-align: center;
+            z-index: 10;
         }
 
-        .gate-card {
-            border: 1px solid #111; padding: 50px;
-            background: rgba(0, 0, 0, 0.95); text-align: center;
-            position: relative; transition: 0.1s;
-            border-left: 5px solid var(--danger);
-            animation: breathe 4s infinite ease-in-out;
+        .status-header {
+            font-size: 0.8rem;
+            letter-spacing: 5px;
+            color: var(--accent);
+            margin-bottom: 20px;
+            text-transform: uppercase;
         }
 
-        @keyframes breathe { 0%, 100% { box-shadow: 0 0 20px #111; } 50% { box-shadow: 0 0 60px rgba(255, 0, 0, 0.2); } }
-
-        h1 { font-size: 1.8rem; color: var(--danger); letter-spacing: 8px; margin-bottom: 5px; }
-        .warning-sub { font-size: 0.8rem; color: #444; margin-bottom: 30px; letter-spacing: 2px; }
-
-        .price-area { margin: 20px 0; }
-        .price { font-size: 5rem; font-weight: 900; text-shadow: 5px 5px var(--void); color: #fff; line-height: 1; }
-        
-        .counter-box { font-size: 0.7rem; color: var(--terminal); margin-top: 10px; opacity: 0.6; }
-
-        .buy-btn {
-            background: var(--danger); color: white; border: none;
-            padding: 20px 50px; font-size: 1.2rem; font-weight: 900;
-            margin-top: 30px; letter-spacing: 2px; transition: 0.2s;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+        .main-question {
+            font-size: 2.5rem;
+            font-weight: 700;
+            max-width: 800px;
+            line-height: 1.2;
+            margin-bottom: 40px;
         }
 
-        .buy-btn:hover { background: white; color: black; transform: scale(1.1) rotate(-1deg); }
-
-        #eye-cursor {
-            position: fixed; width: 30px; height: 30px; border: 2px solid var(--danger);
-            border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%);
-            z-index: 10000; display: flex; align-items: center; justify-content: center;
+        /* الكرة النابضة التفاعلية */
+        .intuition-sphere {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            border-radius: 50%;
+            margin: 0 auto;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.2);
+            animation: pulse 4s infinite ease-in-out;
+            cursor: pointer;
+            border: 1px solid rgba(0, 242, 255, 0.3);
         }
-        #eye-cursor::after { content: ''; width: 6px; height: 6px; background: var(--danger); border-radius: 50%; }
 
-        .scanline {
-            width: 100%; height: 100px; background: linear-gradient(0deg, transparent, rgba(0, 242, 255, 0.05), transparent);
-            position: absolute; top: -100px; animation: scan 3s infinite linear;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; box-shadow: 0 0 50px rgba(0, 242, 255, 0.2); }
+            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 100px rgba(0, 242, 255, 0.5); }
         }
-        @keyframes scan { 0% { top: -100px; } 100% { top: 100%; } }
+
+        .stats-footer {
+            margin-top: 50px;
+            font-size: 0.7rem;
+            color: #444;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        /* دعم الموبايل */
+        @media (max-width: 768px) {
+            .main-question { font-size: 1.8rem; padding: 0 20px; }
+        }
     </style>
 </head>
-<body onmousemove="update(event)" onclick="panic()">
+<body>
 
-    <div class="vignette"></div>
-    <div class="glitch-screen" id="glitch"></div>
-    <div class="scanline"></div>
-    <div id="eye-cursor"></div>
+    <div class="background-grid"></div>
 
-    <div class="gate-card">
-        <h1 id="title">FORBIDDEN DATA</h1>
-        <div class="warning-sub">警告：未經授權的訪問將導致系統崩潰</div>
+    <div class="main-container">
+        <div class="status-header" id="status">928,472 Perspectives Live</div>
         
-        <div class="price-area">
-            <div class="price">$4.99</div>
-            <div class="counter-box">
-                [LIVE_FEED]: <span id="sales">11239</span> USERS_PURCHASED
-            </div>
-        </div>
+        <h1 class="main-question" id="question">
+            Global Sensation: <br>
+            <span style="color: var(--accent);">[ECONOMIC_SHIFT]</span>
+        </h1>
 
-        <button class="buy-btn" id="btn">DOWNLOAD SOUL</button>
+        <div class="intuition-sphere" onclick="handleInteraction()"></div>
+
+        <div class="stats-footer">
+            <div>SYNC_RATE: 98.2%</div>
+            <div>ACTIVE_NODES: 142 COUNTRIES</div>
+        </div>
     </div>
 
     <script>
-        const glitch = document.getElementById('glitch');
-        const sales = document.getElementById('sales');
-        const cursor = document.getElementById('eye-cursor');
-        const title = document.getElementById('title');
-        
-        let count = 11239;
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        setInterval(() => {
-            count += Math.floor(Math.random() * 4) + 1;
-            sales.innerText = count.toLocaleString();
-        }, 10000);
-
-        function playHarmonic(f, t) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const g = audioCtx.createGain();
-            osc.type = t;
-            osc.frequency.setValueAtTime(f, audioCtx.currentTime);
-            g.gain.setValueAtTime(0.02, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
-            osc.connect(g); g.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-        }
-
-        function update(e) {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-            if(Math.random() > 0.97) playHarmonic(60 + Math.random() * 40, 'square');
-        }
-
-        function panic() {
-            // تنفيذ رابط الدفع الخاص بك مع تأثير الرعب
-            glitch.classList.add('active-glitch');
-            playHarmonic(40, 'sawtooth');
-            title.innerText = "TRANSFERRING_SOUL...";
-            title.style.color = "white";
-            
+        // دقة برمجية لضمان عمل التفاعل على جميع المتصفحات
+        function handleInteraction() {
+            const sphere = document.querySelector('.intuition-sphere');
+            sphere.style.background = 'radial-gradient(circle, #ff0055 0%, transparent 70%)';
+            sphere.style.borderColor = '#ff0055';
             setTimeout(() => {
-                // الرابط الخاص بك مدمج هنا
-                window.location.href = "https://buy.stripe.com/test_8x2fZhcoCbnC26l3C77ss00";
+                sphere.style.background = 'radial-gradient(circle, var(--accent) 0%, transparent 70%)';
+                sphere.style.borderColor = 'rgba(0, 242, 255, 0.3)';
             }, 500);
         }
-
-        setInterval(() => {
-            if(Math.random() > 0.9) {
-                document.body.style.filter = "invert(1)";
-                setTimeout(() => document.body.style.filter = "none", 50);
-            }
-        }, 3000);
     </script>
 </body>
 </html>
