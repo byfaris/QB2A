@@ -1,136 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRID_01 | Collective Intuition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #000000;
-            --accent: #00f2ff;
-            --text: #ffffff;
-            --grid-color: rgba(255, 255, 255, 0.05);
+<script>
+    const translations = {
+        en: {
+            status: "928,472 Perspectives Live",
+            question: "Global Sensation: <br><span style='color: var(--accent);'>[ECONOMIC_SHIFT]</span>",
+            sync: "SYNC_RATE",
+            nodes: "ACTIVE_NODES",
+            countries: "COUNTRIES",
+            dir: "ltr"
+        },
+        ar: {
+            status: "928,472 منظور حي الآن",
+            question: "الإحساس العالمي الحالي: <br><span style='color: var(--accent);'>[تحول_اقتصادي]</span>",
+            sync: "معدل المزامنة",
+            nodes: "العقد النشطة",
+            countries: "دولة",
+            dir: "rtl"
         }
+    };
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Space Grotesk', sans-serif;
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+    let currentLang = 'en';
 
-        /* خلفية الشبكة المتحركة */
-        .background-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 200%;
-            background-image: 
-                linear-gradient(var(--grid-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 50px 50px;
-            transform: rotate(-15deg);
-            z-index: -1;
-            animation: moveGrid 20s linear infinite;
-        }
-
-        @keyframes moveGrid {
-            from { transform: translate(0, 0) rotate(-15deg); }
-            to { transform: translate(-50px, -50px) rotate(-15deg); }
-        }
-
-        .main-container {
-            text-align: center;
-            z-index: 10;
-        }
-
-        .status-header {
-            font-size: 0.8rem;
-            letter-spacing: 5px;
-            color: var(--accent);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .main-question {
-            font-size: 2.5rem;
-            font-weight: 700;
-            max-width: 800px;
-            line-height: 1.2;
-            margin-bottom: 40px;
-        }
-
-        /* الكرة النابضة التفاعلية */
-        .intuition-sphere {
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
-            border-radius: 50%;
-            margin: 0 auto;
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.2);
-            animation: pulse 4s infinite ease-in-out;
-            cursor: pointer;
-            border: 1px solid rgba(0, 242, 255, 0.3);
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; box-shadow: 0 0 50px rgba(0, 242, 255, 0.2); }
-            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 100px rgba(0, 242, 255, 0.5); }
-        }
-
-        .stats-footer {
-            margin-top: 50px;
-            font-size: 0.7rem;
-            color: #444;
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-        }
-
-        /* دعم الموبايل */
-        @media (max-width: 768px) {
-            .main-question { font-size: 1.8rem; padding: 0 20px; }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="background-grid"></div>
-
-    <div class="main-container">
-        <div class="status-header" id="status">928,472 Perspectives Live</div>
+    function switchLanguage(lang) {
+        currentLang = lang;
+        const t = translations[lang];
+        document.body.dir = t.dir;
+        document.getElementById('status').innerText = t.status;
+        document.getElementById('question').innerHTML = t.question;
+        document.getElementById('sync-text').innerText = t.sync;
+        document.getElementById('nodes-text').innerText = t.nodes;
+        document.getElementById('country-text').innerText = t.countries;
         
-        <h1 class="main-question" id="question">
-            Global Sensation: <br>
-            <span style="color: var(--accent);">[ECONOMIC_SHIFT]</span>
-        </h1>
-
-        <div class="intuition-sphere" onclick="handleInteraction()"></div>
-
-        <div class="stats-footer">
-            <div>SYNC_RATE: 98.2%</div>
-            <div>ACTIVE_NODES: 142 COUNTRIES</div>
-        </div>
-    </div>
-
-    <script>
-        // دقة برمجية لضمان عمل التفاعل على جميع المتصفحات
-        function handleInteraction() {
-            const sphere = document.querySelector('.intuition-sphere');
-            sphere.style.background = 'radial-gradient(circle, #ff0055 0%, transparent 70%)';
-            sphere.style.borderColor = '#ff0055';
-            setTimeout(() => {
-                sphere.style.background = 'radial-gradient(circle, var(--accent) 0%, transparent 70%)';
-                sphere.style.borderColor = 'rgba(0, 242, 255, 0.3)';
-            }, 500);
-        }
-    </script>
-</body>
-</html>
+        // تغيير الخط بناءً على اللغة لضمان الجودة البصرية
+        document.body.style.fontFamily = lang === 'ar' ? "'Cairo', sans-serif" : "'Space Grotesk', sans-serif";
+    }
+</script>
