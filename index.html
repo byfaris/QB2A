@@ -1,173 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRID_01 | Global Intuition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #000000;
-            --accent: #00f2ff;
-            --text: #ffffff;
-            --grid: rgba(255, 255, 255, 0.05);
-        }
+<style>
+    /* واجهة الخيارات الجديدة */
+    .options-overlay {
+        display: none;
+        gap: 30px;
+        margin-top: 30px;
+        animation: fadeIn 0.8s ease forwards;
+    }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Space Grotesk', sans-serif;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.5s ease;
-        }
+    .choice-sphere {
+        width: 80px; height: 80px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.6rem; font-weight: bold; letter-spacing: 1px;
+    }
 
-        /* التصميم الشبكي الحصري */
-        .background-layer {
-            position: fixed;
-            top: 0; left: 0; width: 200%; height: 200%;
-            background-image: 
-                linear-gradient(var(--grid) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: -1;
-            animation: gridMove 40s linear infinite;
-        }
+    .choice-sphere:hover { transform: scale(1.2); box-shadow: 0 0 30px currentColor; }
 
-        @keyframes gridMove {
-            from { transform: translate(0, 0) rotate(-5deg); }
-            to { transform: translate(-40px, -40px) rotate(-5deg); }
-        }
+    /* الألوان الوظيفية للحدس */
+    .pos { background: radial-gradient(circle, #00ffcc 0%, transparent 80%); color: #00ffcc; }
+    .neu { background: radial-gradient(circle, #bd00ff 0%, transparent 80%); color: #bd00ff; }
+    .neg { background: radial-gradient(circle, #ff4d00 0%, transparent 80%); color: #ff4d00; }
 
-        .main-frame {
-            text-align: center;
-            z-index: 10;
-            max-width: 800px;
-            padding: 20px;
-        }
+    .hidden { display: none !important; }
+    .visible-flex { display: flex !important; }
+</style>
 
-        .system-status {
-            font-size: 0.7rem;
-            letter-spacing: 4px;
-            color: var(--accent);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .hero-title {
-            font-size: clamp(1.5rem, 5vw, 3rem);
-            font-weight: 700;
-            margin-bottom: 50px;
-            line-height: 1.2;
-        }
-
-        /* النواة التفاعلية */
-        .intuition-core {
-            width: 140px;
-            height: 140px;
-            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
-            border-radius: 50%;
-            margin: 0 auto;
-            cursor: pointer;
-            border: 1px solid rgba(0, 242, 255, 0.2);
-            position: relative;
-            transition: 0.4s;
-        }
-
-        .intuition-core:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 50px var(--accent);
-        }
-
-        /* نظام اللغات */
-        .lang-control {
-            position: fixed; top: 30px; right: 30px;
-            display: flex; gap: 20px;
-        }
-
-        .lang-toggle {
-            color: #555; cursor: pointer; font-size: 0.8rem;
-            text-decoration: none; transition: 0.3s;
-        }
-
-        .lang-toggle.active { color: var(--accent); font-weight: bold; }
-
-        .data-stream {
-            margin-top: 60px;
-            display: flex; justify-content: center; gap: 40px;
-            font-size: 0.6rem; color: #333; letter-spacing: 2px;
-        }
-    </style>
-</head>
-<body id="main-view">
-
-    <div class="lang-control">
-        <span class="lang-toggle active" id="en-btn" onclick="setLocale('en')">EN</span>
-        <span class="lang-toggle" id="ar-btn" onclick="setLocale('ar')">AR</span>
-    </div>
-
-    <div class="background-layer"></div>
-
-    <div class="main-frame">
+<div class="main-frame">
+    <div id="core-gate">
         <div class="system-status" id="status-line">Nodes Active: 928,472</div>
-        
-        <h1 class="hero-title" id="main-title">
-            Collective Intuition:<br>
-            <span style="color: var(--accent);">[SYSTEM_READY]</span>
-        </h1>
-
-        <div class="intuition-core" onclick="executeTransition()"></div>
-
-        <div class="data-stream">
-            <div id="stat-1">CONFIDENCE: 98%</div>
-            <div id="stat-2">SYNC: ACTIVE</div>
-        </div>
+        <h1 class="hero-title" id="main-title">Collective Intuition:<br><span style="color: var(--accent);">[SYSTEM_READY]</span></h1>
+        <div class="intuition-core" onclick="openIntuitionMenu()"></div>
     </div>
 
-    <script>
-        const lexicon = {
-            en: {
-                status: "Nodes Active: 928,472",
-                title: "Collective Intuition:<br><span style='color: #00f2ff;'>[SYSTEM_READY]</span>",
-                s1: "CONFIDENCE: 98%",
-                s2: "SYNC: ACTIVE",
-                dir: "ltr",
-                font: "'Space Grotesk', sans-serif"
-            },
-            ar: {
-                status: "العقد النشطة: 928,472",
-                title: "الحدس الجماعي:<br><span style='color: #00f2ff;'>[النظام_جاهز]</span>",
-                s1: "الثقة: 98%",
-                s2: "المزامنة: نشطة",
-                dir: "rtl",
-                font: "'Cairo', sans-serif"
-            }
-        };
+    <div class="options-overlay" id="options-menu">
+        <div class="choice-sphere pos" onclick="submitIntuition('Positive')">STABLE</div>
+        <div class="choice-sphere neu" onclick="submitIntuition('Neutral')">UNCERTAIN</div>
+        <div class="choice-sphere neg" onclick="submitIntuition('Volatile')">VOLATILE</div>
+    </div>
+</div>
 
-        function setLocale(l) {
-            const d = lexicon[l];
-            const body = document.getElementById('main-view');
-            body.dir = d.dir;
-            body.style.fontFamily = d.font;
-            document.getElementById('status-line').innerText = d.status;
-            document.getElementById('main-title').innerHTML = d.title;
-            document.getElementById('stat-1').innerText = d.s1;
-            document.getElementById('stat-2').innerText = d.s2;
+<script>
+    function openIntuitionMenu() {
+        // إخفاء النواة وإظهار خيارات الحدس بسلاسة
+        document.getElementById('core-gate').classList.add('hidden');
+        document.getElementById('options-menu').classList.add('visible-flex');
+        
+        // تحديث النص العلوي لإرشاد المستخدم
+        const title = document.getElementById('main-title');
+        title.innerHTML = currentLang === 'ar' ? "حدد حدسك اللحظي:" : "Select Your Raw Intuition:";
+    }
 
-            document.getElementById('en-btn').classList.toggle('active', l === 'en');
-            document.getElementById('ar-btn').classList.toggle('active', l === 'ar');
-        }
-
-        function executeTransition() {
-            // هنا تضع رابط المشروع الجديد فقط عند الجاهزية
-            console.log("Interaction Triggered");
-            // window.location.href = "رابط_مشروعك_الجديد_هنا";
-        }
-    </script>
-</body>
-</html>
+    function submitIntuition(type) {
+        alert(currentLang === 'ar' ? "تم تسجيل حدسك: " + type : "Intuition Logged: " + type);
+        // هنا سنبرمج لاحقاً عملية حفظ البيانات وعرض النتائج العالمية
+    }
+</script>
